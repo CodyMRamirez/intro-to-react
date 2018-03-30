@@ -12,18 +12,36 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
 
     <script type="text/babel">
+
        class Greeting extends React.Component {
          constructor(props) {
            super(props);
            this.state = {date: new Date(),
-           value: ''};
+           value: '', items: []};
            this.handleSubmit = this.handleSubmit.bind(this);
+           this.handleTextEntry = this.handleTextEntry.bind(this);
          }
+
+
 
          handleSubmit(event) {
            event.preventDefault();
-           this.setState({value: 'Hello, ' + this.element.value});
-           this.element.value = '';
+           if (this.element.value !== '') {
+             this.setState({value: 'Hello, ' + this.element.value});
+             this.element.value = '';
+           } else {
+             alert('Please enter your name')
+           }
+         }
+
+         handleTextEntry(event) {
+           event.preventDefault();
+           if (this.list.value !== '') {
+             this.setState(this.state.items.push(this.list.value));
+             this.list.value = '';
+           } else {
+             alert('Please enter an item to Submit');
+           }
          }
 
          componentDidMount() {
@@ -45,23 +63,45 @@
 
          render() {
            return (
-             <div>
-               <form onSubmit = {this.handleSubmit}>
-                 <label>
-                   What is your name?
-                   <input type="text" ref={el => this.element = el}/>
-                 </label>
-                 <input type="submit" value="Submit" />
-               </form>
+             <div class="main-container">
+               <div id="name">
                  <h1>{this.state.value}</h1>
-                 <p>It is currently: {this.state.date.toLocaleTimeString()}</p>
+               </div>
+               <div class="inside-container">
+                 <form onSubmit = {this.handleSubmit}>
+                   <label class="label-text">
+                     What is your name?
+                     <input type="text" ref={el => this.element = el}/>
+                   </label>
+                   <input type="submit" value="Submit" />
+                 </form>
+                 <p class="time-string">It is currently {this.props.nameDate} {this.state.date.toLocaleTimeString()}</p>
+                 <form onSubmit = {this.handleTextEntry}>
+                   <label>
+                     What would you like to add for {this.props.nameDate}?
+                     <input type="text" ref={el => this.list = el}/>
+                   </label>
+                   <input type = "submit" value="Submit" />
+                 </form>
+                </div>
+                <div class="list-container">
+                  <h3>Add Items to List:</h3>
+                  <ol>
+                    {this.state.items.map(function(listValue) {
+                    return <li>{listValue}</li>;
+                    })}
+                  </ol>
              </div>
+          </div>
            );
          }
        }
 
+       var date = new Date();
+       var nameDate = date.toLocaleDateString('en-US', {weekday: 'long'});
+
        ReactDOM.render(
-         <Greeting />, document.getElementById('app')
+         <Greeting nameDate={nameDate} />, document.getElementById('app')
        );
     </script>
   </body>
